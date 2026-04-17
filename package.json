@@ -1,0 +1,46 @@
+{
+  "name": "kam",
+  "version": "0.1.0",
+  "description": "KAM — AI-powered enterprise execution platform by Kam Solutions. Branded AI command layer for consulting, delivery, coding, QA, and decision support.",
+  "bin": {
+    "kam": "./bin/kam.js"
+  },
+  "main": "./src/cli.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node ./bin/kam.js",
+    "postinstall": "node ./src/postinstall.js || exit 0"
+  },
+  "keywords": [
+    "kam",
+    "kam-solutions",
+    "ai",
+    "agents",
+    "enterprise",
+    "consulting",
+    "openclaw",
+    "telegram",
+    "mcp",
+    "automation"
+  ],
+  "author": "Kam Solutions (Khalil Abu Mushref)",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "bin",
+    "src",
+    "docs",
+    "LICENSE",
+    "README.md"
+  ],
+  "dependencies": {
+    "commander": "^12.1.0",
+    "kleur": "^4.1.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Khalil-am/kam.git"
+  }
+}
