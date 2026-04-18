@@ -1,55 +1,70 @@
 "use strict";
 
+// Respect --no-color and NO_COLOR before anything else prints.
+if (process.argv.includes("--no-color") || process.env.NO_COLOR) {
+  process.env.FORCE_COLOR = "0";
+}
+
 const { Command } = require("commander");
 const kleur = require("kleur");
 const pkg = require("../package.json");
 const { printBanner } = require("./banner");
 const { resolveKamEnv } = require("./paths");
 const { runOpenclaw } = require("./openclaw");
+const log = require("./logger");
 
 const program = new Command();
 
 program
   .name("kam")
-  .description("KAM — AI-powered enterprise execution platform by Kam Solutions.")
+  .description(
+    "KAM — AI-powered enterprise execution platform by Kam Solutions.\n" +
+      "Branded AI command layer for consulting, delivery, coding, QA, and decision support."
+  )
   .version(pkg.version, "-v, --version", "show KAM version")
   .helpOption("-h, --help", "show help")
   .option("--quiet", "suppress KAM banner")
+  .option("--no-color", "disable ANSI colors")
   .hook("preAction", (thisCommand) => {
     if (!thisCommand.opts().quiet && !process.env.KAM_NO_BANNER) {
       printBanner();
     }
   });
 
-// kam start — first-run onboarding + gateway up
 require("./commands/start")(program);
-// kam gateway <subcommand> — passthrough to `openclaw gateway`
 require("./commands/gateway")(program);
-// kam telegram <subcommand> — configure Telegram channel
 require("./commands/telegram")(program);
-// kam agent <id> <message>  — send a turn to a specific KAM agent
 require("./commands/agent")(program);
-// kam doctor — health checks
 require("./commands/doctor")(program);
-// kam config — config helpers
 require("./commands/config")(program);
-// kam where — print resolved state/config paths
 require("./commands/where")(program);
-// kam raw -- ...args — pass anything through to openclaw with KAM state dir
+require("./commands/version")(program);
 require("./commands/raw")(program);
 
-// Fall through: any unknown subcommand is forwarded to `openclaw` with KAM env.
-program
-  .command("* ", { noHelp: true, hidden: true })
-  .allowUnknownOption(true)
-  .action(() => {
-    const args = program.args;
-    const env = resolveKamEnv();
-    const code = runOpenclaw(args, { env, inherit: true });
-    process.exit(code);
-  });
+// Friendly footer on help.
+program.addHelpText(
+  "after",
+  "\nDocs: https://github.com/Khalil-am/kam-cli\n" +
+    "Brand: Kam Solutions — AI-powered consulting, execution, intelligent operations.\n"
+);
 
-program.parseAsync(process.argv).catch((err) => {
-  console.error(kleur.red("kam: ") + (err && err.message ? err.message : String(err)));
+process.on("unhandledRejection", (reason) => {
+  log.fail("unhandled error: " + (reason && reason.message ? reason.message : String(reason)));
+  log.hint("Run 'kam doctor' for diagnostics.");
   process.exit(1);
 });
+process.on("uncaughtException", (err) => {
+  log.fail("uncaught exception: " + (err && err.message ? err.message : String(err)));
+  log.hint("Run 'kam doctor' for diagnostics.");
+  process.exit(1);
+});
+
+program.parseAsync(process.argv).catch((err) => {
+  log.fail(err && err.message ? err.message : String(err));
+  process.exit(1);
+});
+
+// Silence an unused-import warning without affecting behavior.
+void kleur;
+void runOpenclaw;
+void resolveKamEnv;

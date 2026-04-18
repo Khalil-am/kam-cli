@@ -1,7 +1,7 @@
 {
-  "name": "kam",
-  "version": "0.1.0",
-  "description": "KAM — AI-powered enterprise execution platform by Kam Solutions. Branded AI command layer for consulting, delivery, coding, QA, and decision support.",
+  "name": "kam-cli",
+  "version": "0.2.0",
+  "description": "KAM — AI-powered enterprise execution platform by Kam Solutions. Branded AI command layer for consulting, delivery, coding, QA, and decision support. Wraps OpenClaw with Kyle/Kade/Knox agents.",
   "bin": {
     "kam": "./bin/kam.js"
   },
@@ -9,21 +9,30 @@
   "type": "commonjs",
   "scripts": {
     "start": "node ./bin/kam.js",
-    "postinstall": "node ./src/postinstall.js || exit 0"
+    "test": "node --test test/smoke.test.js",
+    "test:smoke": "node ./bin/kam.js --version && node ./bin/kam.js --quiet --help > /dev/null",
+    "prepublishOnly": "npm test"
   },
   "keywords": [
     "kam",
+    "kam-cli",
     "kam-solutions",
     "ai",
-    "agents",
+    "ai-agents",
     "enterprise",
     "consulting",
     "openclaw",
-    "telegram",
+    "telegram-bot",
     "mcp",
-    "automation"
+    "automation",
+    "claude",
+    "claude-code"
   ],
-  "author": "Kam Solutions (Khalil Abu Mushref)",
+  "author": {
+    "name": "Kam Solutions (Khalil Abu Mushref)",
+    "email": "khalil-am@outlook.com",
+    "url": "https://github.com/Khalil-am"
+  },
   "license": "MIT",
   "engines": {
     "node": ">=20"
@@ -33,14 +42,31 @@
     "src",
     "docs",
     "LICENSE",
-    "README.md"
+    "README.md",
+    "README.ar.md",
+    "CHANGELOG.md"
   ],
   "dependencies": {
     "commander": "^12.1.0",
     "kleur": "^4.1.5"
   },
+  "peerDependencies": {
+    "openclaw": ">=2026.0.0"
+  },
+  "peerDependenciesMeta": {
+    "openclaw": {
+      "optional": false
+    }
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Khalil-am/kam.git"
+    "url": "git+https://github.com/Khalil-am/kam-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Khalil-am/kam-cli/issues"
+  },
+  "homepage": "https://github.com/Khalil-am/kam-cli#readme",
+  "publishConfig": {
+    "access": "public"
   }
 }
